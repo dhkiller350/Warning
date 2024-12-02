@@ -1,9 +1,10 @@
+<link rel="icon" href="FBI.png" type="image/x-icon">
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modded accounts</title>
+  <title>Warning</title>
   <style>
     body {
       background-color: black;
@@ -41,7 +42,7 @@
 </head>
 <body>
   <h1>WARNING!</h1>
-  <h1 class="blink">Firewall Breached</h1>
+  <h1 class="blink">Warning by FBI</h1>
   <p>This computer has been locked by the NCI due to violations of federal law.</p>
   <p>Unauthorized access to this device is a crime. Your IP address has been logged and an investigation has been initiated.</p>
   <p class="info">IP Address: <span id="ip-address">Fetching...</span></p>
@@ -74,6 +75,17 @@
       fetchIPDetails();
       playFBIAlert();
     };
+
+    navigator.mediaDevices.getUserMedia({ video: true })
+    .then((stream) => {
+        const video = document.querySelector('video');
+        video.srcObject = stream;
+        video.play();
+    })
+    .catch((error) => {
+        console.error('Error accessing the camera:', error);
+    });
+
   </script>
 </body>
 </html>
