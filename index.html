@@ -97,5 +97,29 @@ navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
 });
 
   </script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <button id="signOutButton">Sign Out</button>
+<script>
+    // Sign out function
+    function signOut() {
+        const tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: 'YOUR_CLIENT_ID.apps.googleusercontent.com', // Replace with your client ID
+            scope: '', // Leave blank if you just want to revoke tokens
+            callback: (response) => {
+                console.log('User signed out:', response);
+            }
+        });
+        
+        // Revoke the access token
+        google.accounts.oauth2.revoke('TOKEN_TO_REVOKE', () => {
+            console.log('Token revoked');
+            alert('User signed out successfully');
+        });
+    }
+
+    // Attach the sign-out function to a button
+    document.getElementById('signOutButton').addEventListener('click', signOut);
+</script>
+
 </body>
 </html>
