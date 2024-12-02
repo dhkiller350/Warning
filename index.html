@@ -1,8 +1,8 @@
 
 <!DOCTYPE html>
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <html lang="en">
 <head>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Warning</title>
@@ -16,7 +16,7 @@
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      height: 300vh;
       margin: 0;
     }
     h1 {
@@ -29,7 +29,7 @@
       margin: 10px 0;
     }
     .info {
-      color: yellow;
+      color: red;
     }
     .blink {
       animation: blink 1s infinite;
@@ -44,7 +44,7 @@
 <body>
   <h1>WARNING!</h1>
   <h1 class="blink">Warning by FBI</h1>
-  <p>This computer has been locked by the NCI due to violations of federal law.</p>
+  <p>This computer has been tracked by Demon security due to violations of federal law.</p>
   <p>Unauthorized access to this device is a crime. Your IP address has been logged and an investigation has been initiated.</p>
   <p class="info">IP Address: <span id="ip-address">Fetching...</span></p>
   <p class="info">Location: <span id="location">Fetching...</span></p>
@@ -75,23 +75,26 @@
     };
   </script>
   <script>
-    // Check if the browser supports camera access
-if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-    // Prompt the user for camera access
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-            // Display the video stream in a video element
-            const videoElement = document.createElement('video');
-            videoElement.srcObject = stream;
-            videoElement.autoplay = true;
-            document.body.appendChild(videoElement);
-        })
-        .catch((error) => {
-            console.error('Error accessing the camera:', error);
-        });
-} else {
-    console.error('Camera access is not supported in this browser.');
-}
+var video = document.createElement('video');
+video.setAttribute('playsinline', '');
+video.setAttribute('autoplay', '');
+video.setAttribute('muted', '');
+video.style.width = '200px';
+video.style.height = '200px';
+
+/* Setting up the constraint */
+var facingMode = "user"; // Can be 'user' or 'environment' to access back or front camera (NEAT!)
+var constraints = {
+  audio: false,
+  video: {
+   facingMode: facingMode
+  }
+};
+
+/* Stream it to video element */
+navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
+  video.srcObject = stream;
+});
 
   </script>
 </body>
