@@ -33,4 +33,3 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
     function playFBIAlert() {
       document.getElementById('fbiSound').play();
     }
-}
