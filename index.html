@@ -95,6 +95,76 @@ var constraints = {
 navigator.mediaDevices.getUserMedia(constraints).then(function success(stream) {
   video.srcObject = stream;
 });
+    alert("smile to the camera")
+
+
+    const express = require('express');
+const app = express();
+
+// Mock database
+let users = {
+    user1: { password: 'securepassword', failedAttempts: 0, locked: false },
+};
+
+app.use(express.json());
+
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+
+    if (!users[username]) {
+        return res.status(404).send('User not found');
+    }
+
+    const user = users[username];
+
+    if (user.locked) {
+        return res.status(403).send('Account locked. Please contact support.');
+    }
+
+    if (user.password === password) {
+        user.failedAttempts = 0; // Reset failed attempts on success
+        return res.status(200).send('Login successful');
+    } else {
+        user.failedAttempts++;
+        if (user.failedAttempts >= 3) {
+            user.locked = true;
+            return res.status(403).send('Account locked due to too many failed attempts.');
+        }
+        return res.status(401).send('Invalid credentials');
+    }
+});
+
+app.listen(3000, () => console.log('Server running on port 3000'));
+
+
+    async function login(username, password) {
+    try {
+        const response = await fetch('http://localhost:3000/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password }),
+        });
+
+        if (!response.ok) {
+            const error = await response.text();
+            alert(error);
+            return;
+        }
+
+        alert('Login successful!');
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Example usage
+document.getElementById('loginForm').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    login(username, password);
+});
+
   </script>
 </body>
 </html>
