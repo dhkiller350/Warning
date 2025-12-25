@@ -14,7 +14,6 @@ This script provides:
 import os
 import sys
 import subprocess
-import hashlib
 import json
 from datetime import datetime
 from flask import Flask, render_template_string, request, jsonify, session, redirect, url_for
@@ -23,11 +22,24 @@ from functools import wraps
 # Configuration
 ROUTER_IP = "10.0.0.1"
 PS4_IP = "10.0.0.5"
-CONFIG_FILE = "/tmp/firewall_config.json"
+CONFIG_DIR = os.path.expanduser("~/.config/firewall-dashboard")
+CONFIG_FILE = os.path.join(CONFIG_DIR, "firewall_config.json")
+SECRET_KEY_FILE = os.path.join(CONFIG_DIR, "secret_key")
 DEFAULT_PASSWORD = "admin123"  # Change this in production!
 
+# Ensure config directory exists
+os.makedirs(CONFIG_DIR, exist_ok=True)
+
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+
+# Load or generate persistent secret key
+if os.path.exists(SECRET_KEY_FILE):
+    with open(SECRET_KEY_FILE, 'rb') as f:
+        app.secret_key = f.read()
+else:
+    app.secret_key = os.urandom(24)
+    with open(SECRET_KEY_FILE, 'wb') as f:
+        f.write(app.secret_key)
 
 # Dashboard HTML Template
 DASHBOARD_HTML = """
@@ -784,13 +796,10 @@ class FirewallConfig:
 # Global config instance
 firewall_config = FirewallConfig()
 
-def hash_password(password):
-    """Hash password for comparison"""
-    return hashlib.sha256(password.encode()).hexdigest()
-
 def check_password(password):
     """Check if password is correct"""
     # In production, use proper password hashing (bcrypt, etc.)
+    # For now, using simple comparison. Consider upgrading to bcrypt/argon2
     return password == DEFAULT_PASSWORD
 
 def login_required(f):
@@ -807,12 +816,29 @@ def run_command(command, use_sudo=False):
     if use_sudo:
         command = f"sudo {command}"
     
-    try:
-        # In demo mode, simulate command execution
+    # Check if running as root/with sudo
+    is_root = os.geteuid() == 0
+    
+    # If not root, run in demo mode
+    if not is_root and use_sudo:
         print(f"[DEMO] Would execute: {command}")
-        return True, f"Command executed successfully (demo mode): {command}"
+        return True, f"Command simulated (demo mode): {command}"
+    
+    try:
+        # Actually execute the command
+        result = subprocess.run(
+            command,
+            shell=True,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=10
+        )
+        return True, f"Command executed successfully: {result.stdout}"
     except subprocess.CalledProcessError as e:
-        return False, f"Error: {e}"
+        return False, f"Error: {e.stderr or e}"
+    except subprocess.TimeoutExpired:
+        return False, "Error: Command timed out"
     except Exception as e:
         return False, f"Error: {str(e)}"
 

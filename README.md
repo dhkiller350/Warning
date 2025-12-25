@@ -136,7 +136,7 @@ Edit the configuration section in `firewall_dashboard.py`:
 # Configuration
 ROUTER_IP = "10.0.0.1"          # Your router IP
 PS4_IP = "10.0.0.5"             # Your PS4 IP
-CONFIG_FILE = "/tmp/firewall_config.json"  # Config storage
+CONFIG_DIR = "~/.config/firewall-dashboard"  # Config storage directory
 DEFAULT_PASSWORD = "admin123"    # Change this!
 ```
 
@@ -164,13 +164,15 @@ The dashboard uses `iptables` to manage firewall rules:
 
 ### Configuration Storage
 
-All settings are stored in `/tmp/firewall_config.json`:
+All settings are stored in `~/.config/firewall-dashboard/firewall_config.json`:
 - Firewall state
 - Connection state
 - Active rules
 - Allowed/blocked IPs
 - Allowed/blocked MAC addresses
 - VPN status
+
+Session secret key is stored persistently in `~/.config/firewall-dashboard/secret_key`.
 
 ## Common Use Cases
 
@@ -215,9 +217,9 @@ All settings are stored in `/tmp/firewall_config.json`:
 - Clear browser cookies and try again
 
 ### Rules Not Persisting
-- Check permissions on `/tmp/firewall_config.json`
+- Check permissions on `~/.config/firewall-dashboard/`
 - Ensure the script has write access
-- Check disk space: `df -h /tmp`
+- Check disk space: `df -h ~`
 
 ## Demo Mode
 
